@@ -502,85 +502,93 @@ body::after  { background: radial-gradient(circle, #4a1d6b, transparent 62%); bo
 }
 
 /* =====================================================================
- * ---------- 10. Admin-side additions (PROG2002 A3) ------------------
- * dashboard tiles, the management table, badges and the admin forms
+ * ---------- 9. Assessment 3 additions --------------------------------
+ * registration table, registration form and the "success" panel
  * ===================================================================== */
 
-/* ---- dashboard tiles ---------------------------------------------- */
-.admin-tiles {
-    display: grid; gap: 1rem; margin: 1.6rem 0 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+/* ---- registration list on the event detail page -------------------- */
+.reg-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
 }
-.tile {
-    padding: 1.1rem 1.2rem; border-radius: var(--r);
-    background: var(--surface); border: 1px solid var(--border);
-    backdrop-filter: blur(12px); transition: transform .3s var(--ease), border-color .3s;
+.reg-count {
+    display: inline-flex; align-items: center; gap: .45rem;
+    padding: .3rem .8rem; border-radius: 999px; font-size: .8rem; font-weight: 700;
+    background: rgba(255, 201, 77, .14); color: var(--gold);
+    border: 1px solid rgba(255, 201, 77, .3);
 }
-.tile:hover { transform: translateY(-3px); border-color: var(--border-hi); }
-.tile .t-label {
-    font-size: .7rem; font-weight: 800; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim);
-}
-.tile .t-value { font-size: 1.9rem; font-weight: 800; line-height: 1.2; margin-top: .2rem; }
-.tile .t-note { font-size: .78rem; color: var(--text-dim); }
-.tile.is-red   .t-value { color: var(--red); }
-.tile.is-gold  .t-value { color: var(--gold); }
-.tile.is-jade  .t-value { color: var(--jade); }
-.tile.is-cyan  .t-value { color: var(--cyan); }
-.tile.is-violet .t-value { color: var(--violet); }
-
-/* ---- management table --------------------------------------------- */
-.admin-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-.admin-table thead th {
-    text-align: left; padding: .8rem .9rem; font-size: .68rem; font-weight: 800;
+.reg-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.reg-table thead th {
+    text-align: left; padding: .7rem .8rem; font-size: .7rem; font-weight: 800;
     letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim);
     border-bottom: 1px solid var(--border-hi); white-space: nowrap;
 }
-.admin-table tbody td { padding: .85rem .9rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
-.admin-table tbody tr { transition: background .25s var(--ease); }
-.admin-table tbody tr:hover { background: rgba(255, 255, 255, .04); }
-.admin-table .ev-name { font-weight: 700; }
-.admin-table .ev-sub  { display: block; color: var(--text-dim); font-size: .78rem; font-weight: 400; }
-.table-wrap { overflow-x: auto; }
-
-/* ---- status badges ------------------------------------------------- */
-.st {
-    display: inline-block; padding: .18rem .6rem; border-radius: 999px;
-    font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+.reg-table tbody td {
+    padding: .85rem .8rem; border-bottom: 1px solid var(--border); vertical-align: top;
 }
-.st-active    { background: rgba(61, 220, 151, .16);  color: var(--jade);   border: 1px solid rgba(61,220,151,.3); }
-.st-suspended { background: rgba(255, 77, 94, .16);   color: var(--red);    border: 1px solid rgba(255,77,94,.3); }
-.st-past      { background: rgba(255, 255, 255, .1);  color: var(--text-soft); border: 1px solid var(--border-hi); }
-.st-upcoming  { background: rgba(76, 201, 240, .16);  color: var(--cyan);   border: 1px solid rgba(76,201,240,.3); }
-
-/* ---- row action buttons -------------------------------------------- */
-.row-actions { display: flex; gap: .45rem; justify-content: flex-end; }
-.btn-danger {
-    background: linear-gradient(135deg, #ff4d5e, #c9184a); color: #fff;
-    box-shadow: 0 8px 22px rgba(255, 77, 94, .28);
+.reg-table tbody tr { transition: background .25s var(--ease); }
+.reg-table tbody tr:hover { background: rgba(255, 255, 255, .04); }
+.reg-table tbody tr:last-child td { border-bottom: 0; }
+.reg-who { display: flex; align-items: center; gap: .7rem; }
+.avatar {
+    width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 800; font-size: .82rem;
+    background: var(--grad-hot); color: #2a0710;
 }
-.btn-xs { padding: .4rem .8rem; font-size: .78rem; }
-
-/* ---- admin feedback banner ---------------------------------------- */
-.admin-alert {
-    display: flex; align-items: flex-start; gap: .75rem; padding: .95rem 1.15rem;
-    border-radius: var(--r-sm); margin-bottom: 1.2rem; font-size: .9rem; border: 1px solid;
-    animation: fadeUp .35s var(--ease) both;
+.reg-who small { display: block; color: var(--text-dim); font-size: .78rem; }
+.tickets-pill {
+    display: inline-block; min-width: 28px; text-align: center;
+    padding: .2rem .55rem; border-radius: 999px; font-weight: 800; font-size: .82rem;
+    background: rgba(76, 201, 240, .16); color: var(--cyan);
+    border: 1px solid rgba(76, 201, 240, .28);
 }
-.admin-alert.success { background: rgba(61, 220, 151, .12); border-color: rgba(61,220,151,.35); color: var(--jade); }
-.admin-alert.error   { background: rgba(255, 77, 94, .12);  border-color: rgba(255,77,94,.35);  color: var(--red); }
-.admin-alert.info    { background: rgba(76, 201, 240, .1);  border-color: rgba(76,201,240,.3);  color: var(--cyan); }
 
-/* ---- forms --------------------------------------------------------- */
-.admin-form { display: grid; gap: 1.6rem; grid-template-columns: 1.35fr .8fr; align-items: start; }
-@media (max-width: 900px) { .admin-form { grid-template-columns: 1fr; } }
-.field .req { color: var(--red); }
-.form-section-title { font-size: .78rem; font-weight: 800; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: .9rem; }
+/* ---- registration form --------------------------------------------- */
+.form-grid { display: grid; gap: 1.05rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.form-grid .span-2 { grid-column: 1 / -1; }
+.field input.ng-invalid.ng-dirty,
+.field select.ng-invalid.ng-dirty,
+.field textarea.ng-invalid.ng-dirty { border-color: var(--red); }
+.field .hint { font-size: .78rem; color: var(--text-dim); }
+.field-error { color: var(--red); font-size: .8rem; font-weight: 600; }
+.field textarea {
+    padding: .7rem .9rem; border-radius: var(--r-sm); resize: vertical; min-height: 92px;
+    background: rgba(255, 255, 255, .06); border: 1px solid var(--border-hi); color: var(--text);
+    font: inherit; font-size: .92rem;
+}
+.field textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(255,77,94,.18); }
+.form-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.4rem; }
+.form-actions .btn { min-width: 190px; }
 
-@media (max-width: 720px) {
-    .admin-table thead { display: none; }
-    .admin-table tbody td { display: block; border: 0; padding: .25rem .3rem; }
-    .admin-table tbody tr { display: block; padding: .9rem 0; border-bottom: 1px solid var(--border); }
-    .row-actions { justify-content: flex-start; margin-top: .5rem; }
+/* ---- success panel ------------------------------------------------- */
+.success-card {
+    text-align: center; padding: 3rem 2rem; border-radius: var(--r-lg);
+    background: linear-gradient(160deg, rgba(61, 220, 151, .12), rgba(255, 255, 255, .03));
+    border: 1px solid rgba(61, 220, 151, .3); animation: fadeUp .5s var(--ease) both;
+}
+.success-card .tick {
+    width: 76px; height: 76px; margin: 0 auto 1.2rem; border-radius: 50%;
+    display: grid; place-items: center; font-size: 2.2rem;
+    background: var(--grad-hot); color: #2a0710; box-shadow: 0 0 0 8px rgba(61, 220, 151, .12);
+}
+.ticket-stub {
+    max-width: 420px; margin: 1.6rem auto 0; padding: 1.2rem 1.4rem; text-align: left;
+    border-radius: var(--r); background: rgba(255, 255, 255, .05);
+    border: 1px dashed var(--border-hi); font-size: .88rem;
+}
+.ticket-stub .row { display: flex; justify-content: space-between; gap: 1rem; padding: .3rem 0; }
+.ticket-stub .row span:first-child { color: var(--text-dim); }
+
+/* ---- skeleton shimmer while an AngularJS request is in flight ------ */
+.skeleton-card {
+    height: 330px; border-radius: var(--r-lg); border: 1px solid var(--border);
+    background: linear-gradient(100deg, rgba(255,255,255,.04) 30%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.04) 70%);
+    background-size: 220% 100%; animation: shimmer 1.4s infinite linear;
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -20% 0; } }
+
+@media (max-width: 640px) {
+    .reg-table thead { display: none; }
+    .reg-table tbody td { display: block; border: 0; padding: .25rem .4rem; }
+    .reg-table tbody tr { display: block; padding: .8rem 0; border-bottom: 1px solid var(--border); }
 }

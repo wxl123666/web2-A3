@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260" role="img" aria-label="Charity concert">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#180a2e"/><stop offset="60%" stop-color="#4a1350"/>
+      <stop offset="100%" stop-color="#7d1c56"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff7ad9" stop-opacity=".75"/><stop offset="100%" stop-color="#ff7ad9" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ae7ff" stop-opacity=".7"/><stop offset="100%" stop-color="#7ae7ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="260" fill="url(#night)"/>
+
+  <!-- light beams -->
+  <g>
+    <path d="M120 30 L60 210 L150 210 Z" fill="url(#beam)">
+      <animateTransform attributeName="transform" type="rotate" values="-8 120 30; 8 120 30; -8 120 30" dur="4.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M270 30 L330 210 L240 210 Z" fill="url(#beam2)">
+      <animateTransform attributeName="transform" type="rotate" values="8 270 30; -8 270 30; 8 270 30" dur="5.2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M195 30 L175 210 L215 210 Z" fill="url(#beam)" opacity=".6">
+      <animateTransform attributeName="transform" type="rotate" values="4 195 30; -5 195 30; 4 195 30" dur="3.8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- stage -->
+  <rect x="70" y="150" width="260" height="10" rx="4" fill="#2a0f3d"/>
+  <rect x="70" y="160" width="260" height="34" fill="#170a26"/>
+  <!-- speakers -->
+  <g fill="#22103a" stroke="#7ae7ff" stroke-width="1.5">
+    <rect x="86" y="104" width="34" height="46" rx="4"/>
+    <circle cx="103" cy="118" r="9" fill="#3d1b5e"/>
+    <circle cx="103" cy="138" r="6" fill="#3d1b5e"/>
+    <rect x="280" y="104" width="34" height="46" rx="4"/>
+    <circle cx="297" cy="118" r="9" fill="#3d1b5e"/>
+    <circle cx="297" cy="138" r="6" fill="#3d1b5e"/>
+  </g>
+  <!-- singer -->
+  <g transform="translate(200,132)">
+    <animateTransform attributeName="transform" type="translate" values="200,132;200,126;200,132" dur="1.4s" repeatCount="indefinite"/>
+    <circle cx="0" cy="-14" r="9" fill="#1a0b28"/>
+    <path d="M-11 -4 q11 -8 22 0 l4 22 -30 0 z" fill="#1a0b28"/>
+    <rect x="-16" y="-2" width="6" height="14" rx="3" fill="#1a0b28"/>
+    <!-- microphone -->
+    <g><rect x="14" y="-8" width="3" height="18" rx="1.5" fill="#8892b0"/><circle cx="15.5" cy="-11" r="4" fill="#c3cbe0"/></g>
+  </g>
+
+  <!-- crowd -->
+  <g fill="#0d0518">
+    <g transform="translate(40,196)"><circle cx="0" cy="0" r="9"/><path d="M-12 12 q12 -7 24 0 l3 40 -30 0 z"/><path d="M-8 10 L-16 -6" stroke="#0d0518" stroke-width="5" fill="none"><animateTransform attributeName="transform" type="rotate" values="-10 -8 10;12 -8 10;-10 -8 10" dur="1.2s" repeatCount="indefinite"/></path></g>
+    <g transform="translate(104,202)"><circle cx="0" cy="0" r="8"/><path d="M-11 11 q11 -7 22 0 l3 36 -28 0 z"/><path d="M7 10 L15 -8" stroke="#0d0518" stroke-width="5" fill="none"><animateTransform attributeName="transform" type="rotate" values="10 7 10;-12 7 10;10 7 10" dur="1.5s" repeatCount="indefinite"/></path></g>
+    <g transform="translate(300,202)"><circle cx="0" cy="0" r="8"/><path d="M-11 11 q11 -7 22 0 l3 36 -28 0 z"/><path d="M-7 10 L-15 -8" stroke="#0d0518" stroke-width="5" fill="none"><animateTransform attributeName="transform" type="rotate" values="-12 -7 10;10 -7 10;-12 -7 10" dur="1.35s" repeatCount="indefinite"/></path></g>
+    <g transform="translate(360,196)"><circle cx="0" cy="0" r="9"/><path d="M-12 12 q12 -7 24 0 l3 40 -30 0 z"/><path d="M8 10 L16 -6" stroke="#0d0518" stroke-width="5" fill="none"><animateTransform attributeName="transform" type="rotate" values="8 8 10;-10 8 10;8 8 10" dur="1.7s" repeatCount="indefinite"/></path></g>
+  </g>
+
+  <!-- floating music notes -->
+  <g fill="#ffd6f2">
+    <g><path d="M64 96 l0 -22 l14 -4 l0 22 z M64 96 a6 5 0 1 0 0.1 0 z M78 92 a6 5 0 1 0 0.1 0 z" transform="rotate(-12 71 88)"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0;-10,-46" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite"/></g>
+    <g><path d="M330 110 l0 -18 l12 -3 l0 18 z M330 110 a5 4 0 1 0 0.1 0 z M342 107 a5 4 0 1 0 0.1 0 z" transform="rotate(10 336 104)"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0;12,-52" dur="5s" begin="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" dur="5s" begin="1.2s" repeatCount="indefinite"/></g>
+  </g>
+</svg>

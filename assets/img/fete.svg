@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260" role="img" aria-label="Community charity fete">
+  <defs>
+    <linearGradient id="day" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b3a4a"/><stop offset="55%" stop-color="#12685c"/>
+      <stop offset="100%" stop-color="#0a2a24"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="260" fill="url(#day)"/>
+
+  <!-- sun & clouds -->
+  <circle cx="330" cy="46" r="26" fill="#ffe08a" opacity=".9"/>
+  <g fill="#ffffff" opacity=".22">
+    <ellipse cx="70" cy="48" rx="30" ry="13">
+      <animate attributeName="cx" values="50;110;50" dur="22s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="200" cy="32" rx="24" ry="10">
+      <animate attributeName="cx" values="180;240;180" dur="26s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- trees -->
+  <g>
+    <g transform="translate(36,168)"><rect x="-4" y="10" width="8" height="34" rx="3" fill="#4a2f1c"/><circle cx="0" cy="0" r="24" fill="#1f7a5a"/><circle cx="-14" cy="10" r="16" fill="#26916a"/><circle cx="14" cy="8" r="15" fill="#1a6b4e"/></g>
+    <g transform="translate(366,172)"><rect x="-4" y="10" width="8" height="30" rx="3" fill="#4a2f1c"/><circle cx="0" cy="0" r="21" fill="#1f7a5a"/><circle cx="12" cy="8" r="14" fill="#26916a"/></g>
+  </g>
+
+  <!-- grass -->
+  <path d="M0 206 q100 -14 200 0 t200 0 L400 260 L0 260 Z" fill="#0e5442"/>
+  <path d="M0 226 q120 -12 240 2 t160 -4 L400 260 L0 260 Z" fill="#0a3f33"/>
+
+  <!-- marquee tent -->
+  <g transform="translate(126,120)">
+    <path d="M0 0 L74 0 L60 56 L14 56 Z" fill="#f4f1e8"/>
+    <path d="M0 0 L74 0 L68 -12 L6 -12 Z" fill="#e0714f"/>
+    <path d="M6 -12 L14 -20 L22 -12 L30 -20 L38 -12 L46 -20 L54 -12 L62 -20 L68 -12" fill="#e0714f"/>
+    <path d="M20 56 l0 -34 q17 -12 34 0 l0 34 z" fill="#2b7f66"/>
+    <rect x="34" y="42" width="6" height="14" fill="#f4f1e8"/>
+  </g>
+
+  <!-- stall with bunting -->
+  <g transform="translate(232,142)">
+    <rect x="0" y="0" width="76" height="10" rx="3" fill="#e8b04b"/>
+    <path d="M2 0 l6 -16 l6 16 l6 -16 l6 16 l6 -16 l6 16 l6 -16 l6 16 l6 -16 l6 16 l6 -16 l6 16 z" fill="#e0714f"/>
+    <rect x="6" y="10" width="64" height="44" fill="#f4f1e8"/>
+    <rect x="6" y="30" width="64" height="6" fill="#8ec9b0"/>
+    <circle cx="20" cy="22" r="5" fill="#e0714f"/><circle cx="38" cy="22" r="5" fill="#e8b04b"/><circle cx="56" cy="22" r="5" fill="#2b7f66"/>
+  </g>
+
+  <!-- balloons -->
+  <g>
+    <g transform="translate(292,96)">
+      <animateTransform attributeName="transform" type="translate" values="292,96;292,86;292,96" dur="3.2s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="0" rx="11" ry="14" fill="#e0714f"/>
+      <path d="M0 14 q6 10 -2 18" stroke="#f4f1e8" stroke-width="1.6" fill="none"/>
+    </g>
+    <g transform="translate(312,110)">
+      <animateTransform attributeName="transform" type="translate" values="312,110;312,100;312,110" dur="3.8s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="0" rx="9" ry="12" fill="#e8b04b"/>
+      <path d="M0 12 q5 9 -2 16" stroke="#f4f1e8" stroke-width="1.5" fill="none"/>
+    </g>
+  </g>
+
+  <!-- people -->
+  <g fill="#0a2b22">
+    <g transform="translate(92,196)"><circle cx="0" cy="0" r="8"/><path d="M-10 10 q10 -6 20 0 l3 32 -26 0 z"/></g>
+    <g transform="translate(116,200)"><circle cx="0" cy="0" r="6"/><path d="M-8 8 q8 -5 16 0 l2 26 -20 0 z"/></g>
+    <g transform="translate(196,198)"><circle cx="0" cy="0" r="8"/><path d="M-10 10 q10 -6 20 0 l3 32 -26 0 z"/></g>
+    <g transform="translate(216,202)"><circle cx="0" cy="0" r="6"/><path d="M-8 8 q8 -5 16 0 l2 26 -20 0 z"/></g>
+  </g>
+
+  <!-- hearts -->
+  <g fill="#ff8fa3">
+    <path d="M164 118 c-4-6-12-2-12 5 c0 7 9 11 12 15 c3-4 12-8 12-15 c0-7-8-11-12-5 z">
+      <animate attributeName="transform" values="translate(0,0);translate(-6,-40)" dur="3.6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;.95;0" dur="3.6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

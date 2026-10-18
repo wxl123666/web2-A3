@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260" role="img" aria-label="Community workshop session">
+  <defs>
+    <linearGradient id="room" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d2b4d"/><stop offset="55%" stop-color="#1b4a7a"/>
+      <stop offset="100%" stop-color="#0a1e38"/>
+    </linearGradient>
+    <radialGradient id="lamp"><stop offset="0%" stop-color="#ffe9b0" stop-opacity=".8"/><stop offset="100%" stop-color="#ffe9b0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="400" height="260" fill="url(#room)"/>
+
+  <!-- window light -->
+  <g transform="translate(300,54)">
+    <rect x="0" y="0" width="76" height="58" rx="6" fill="#7fd0ff" opacity=".28"/>
+    <path d="M38 0 v58 M0 29 h76" stroke="#0a1e38" stroke-width="4"/>
+    <circle cx="60" cy="18" r="10" fill="#fff3c4" opacity=".8"/>
+  </g>
+
+  <!-- whiteboard -->
+  <g transform="translate(40,44)">
+    <rect x="0" y="0" width="118" height="70" rx="5" fill="#0f2c47" stroke="#9fd7ff" stroke-width="3"/>
+    <g stroke="#9fd7ff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9">
+      <path d="M12 20 h44"/>
+      <path d="M12 34 h60"/>
+      <path d="M12 48 h34"/>
+    </g>
+    <circle cx="96" cy="46" r="12" fill="none" stroke="#ffd884" stroke-width="3"/>
+    <path d="M96 34 l0 -10 M96 34 l8 6" stroke="#ffd884" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- plant -->
+  <g transform="translate(356,168)">
+    <path d="M0 40 q-14 -4 -12 -22 q10 4 12 22 z" fill="#2f9e6e">
+      <animateTransform attributeName="transform" type="rotate" values="0 0 40;4 0 40;0 0 40" dur="4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M0 40 q14 -6 10 -26 q-10 6 -10 26 z" fill="#3dbb86">
+      <animateTransform attributeName="transform" type="rotate" values="0 0 40;-4 0 40;0 0 40" dur="4.6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-12 40 h24 l-4 24 h-16 z" fill="#c98b3f"/>
+  </g>
+
+  <!-- table -->
+  <rect x="52" y="178" width="296" height="11" rx="5" fill="#d9c39a"/>
+  <rect x="60" y="189" width="280" height="46" fill="#12314f"/>
+  <path d="M60 189 h280 v8 q-140 10 -280 0 z" fill="#1b4a7a" opacity=".6"/>
+
+  <!-- laptops -->
+  <g>
+    <g transform="translate(110,178)">
+      <path d="M-24 -30 h48 l0 30 h-48 z" fill="#16324f" stroke="#9fd7ff" stroke-width="2.4"/>
+      <rect x="-24" y="0" width="48" height="5" rx="2" fill="#9fd7ff"/>
+      <rect x="-18" y="-25" width="36" height="22" fill="#7fd0ff" opacity=".35">
+        <animate attributeName="opacity" values=".25;.5;.25" dur="2.4s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g transform="translate(232,178)">
+      <path d="M-24 -30 h48 l0 30 h-48 z" fill="#16324f" stroke="#ffd884" stroke-width="2.4"/>
+      <rect x="-24" y="0" width="48" height="5" rx="2" fill="#ffd884"/>
+      <rect x="-18" y="-25" width="36" height="22" fill="#ffe9b0" opacity=".3">
+        <animate attributeName="opacity" values=".5;.22;.5" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- people at the table -->
+  <g>
+    <g transform="translate(78,148)"><circle cx="0" cy="0" r="13" fill="#f6c9a8"/><path d="M-18 16 q18 -10 36 0 l5 34 -46 0 z" fill="#2f6ea8"/></g>
+    <g transform="translate(178,150)"><circle cx="0" cy="0" r="12" fill="#e8b489"/><path d="M-16 15 q16 -9 32 0 l4 30 -40 0 z" fill="#e0714f">
+      <animateTransform attributeName="transform" type="translate" values="178,150;178,146;178,150" dur="3.4s" repeatCount="indefinite"/>
+    </path></g>
+    <g transform="translate(304,150)"><circle cx="0" cy="0" r="12" fill="#f6c9a8"/><path d="M-16 15 q16 -9 32 0 l4 30 -40 0 z" fill="#2b7f66"/></g>
+  </g>
+
+  <!-- lightbulb ideas -->
+  <g>
+    <g transform="translate(196,88)">
+      <animateTransform attributeName="transform" type="translate" values="196,88;196,80;196,88" dur="3.6s" repeatCount="indefinite"/>
+      <circle cx="0" cy="0" r="9" fill="#ffd884">
+        <animate attributeName="opacity" values=".7;1;.7" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <rect x="-4" y="8" width="8" height="7" rx="2" fill="#c9b184"/>
+      <g stroke="#ffd884" stroke-width="2" opacity=".8">
+        <path d="M0 -16 v-6 M-14 -10 l-4 -4 M14 -10 l4 -4"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('adminApp');
+    var app = angular.module('charityApp');
 
     /**
      * count-up

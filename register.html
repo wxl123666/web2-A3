@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="charityApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register for an event | Hebei Charity Events</title>
+    <meta name="description" content="Register for a Hebei charity event - choose how many tickets you need.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ff4d5e'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23fff'/><circle cx='48' cy='14' r='4' fill='%23ffc94d'/></svg>">
+</head>
+<body data-page="register">
+<div class="texture"></div>
+<div class="lanterns"></div>
+
+<!-- ===================== NAVIGATION =================================== -->
+<header class="navbar">
+    <nav class="nav-inner" aria-label="Main navigation">
+        <a class="brand" href="index.html">
+            <span class="brand-mark">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#fff"/>
+                </svg>
+            </span>
+            <span class="brand-text">Hebei Charity Events<small>河北公益 &middot; PROG2002 A3</small></span>
+        </a>
+        <ul class="nav-links">
+            <li><span class="nav-pill"></span></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="index.html#about">Partners</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a class="btn btn-primary btn-sm" href="search.html">Find an event</a>
+        </div>
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<main class="container" style="padding-top:2.6rem;padding-bottom:4rem" ng-controller="RegisterCtrl as vm">
+
+    <nav class="text-dim" style="font-size:.85rem;margin-bottom:1.1rem" aria-label="Breadcrumb">
+        <a href="index.html">Home</a> &rsaquo; <a href="search.html">Search</a> &rsaquo;
+        <a ng-href="event.html?id={{ vm.eventId }}">Event</a> &rsaquo; <span>Register</span>
+    </nav>
+
+    <div class="alert alert-error" ng-if="vm.state.error" role="alert" style="display:flex">
+        <span class="ai">&#9888;</span><span class="msg">{{ vm.state.error }}</span>
+    </div>
+
+    <!-- ===================== CONFIRMATION ============================= -->
+    <section class="success-card" ng-if="vm.confirmation">
+        <div class="tick">&#10003;</div>
+        <h1 style="margin:0 0 .5rem">You are registered!</h1>
+        <p class="text-soft" style="margin:0 auto;max-width:52ch">
+            Thank you {{ vm.confirmation.name }} &mdash; your place at
+            <strong>{{ vm.confirmation.eventName }}</strong> is confirmed.
+            A copy of these details has been saved to our database.
+        </p>
+
+        <div class="ticket-stub">
+            <div class="row"><span>Confirmation no.</span><span>#{{ vm.confirmation.registration_id }}</span></div>
+            <div class="row"><span>Event</span><span>{{ vm.confirmation.eventName }}</span></div>
+            <div class="row"><span>Email</span><span>{{ vm.confirmation.email }}</span></div>
+            <div class="row"><span>Tickets</span><span>{{ vm.confirmation.tickets }}</span></div>
+            <div class="row"><span>Total</span><span>{{ vm.U.money(vm.confirmation.total) }}</span></div>
+            <div class="row"><span>Registered at</span><span>{{ vm.U.dateTime(vm.confirmation.when) }}</span></div>
+        </div>
+
+        <div class="form-actions" style="justify-content:center">
+            <a class="btn btn-primary" ng-href="event.html?id={{ vm.eventId }}">&#8592; Back to the event</a>
+            <a class="btn btn-ghost" href="search.html">Find another event</a>
+            <button class="btn btn-violet" type="button" ng-click="vm.reset()">Register someone else</button>
+        </div>
+    </section>
+
+    <!-- ===================== FORM ===================================== -->
+    <div ng-if="!vm.confirmation">
+
+        <div class="section-head" style="margin-bottom:1.6rem">
+            <div>
+                <span class="eyebrow">&#127915; 在线报名 &middot; Event registration</span>
+                <h1 class="section-title">Register for this event</h1>
+                <p class="section-sub">Tell us who is coming and how many tickets you need. All fields marked * are required.</p>
+            </div>
+        </div>
+
+        <!-- validation messages coming from the browser -->
+        <div class="alert alert-error" ng-if="vm.alerts.length" role="alert" style="display:flex">
+            <span class="ai">&#9888;</span>
+            <span class="msg">
+                Please fix the following:
+                <ul style="margin:.4rem 0 0;padding-left:1.1rem">
+                    <li ng-repeat="a in vm.alerts">{{ a }}</li>
+                </ul>
+            </span>
+        </div>
+
+        <div class="detail-grid">
+
+            <!-- ---------- the event being booked ---------- -->
+            <section class="panel" ng-if="vm.event" reveal>
+                <h2>&#127919; You are registering for</h2>
+                <div class="org-hero">
+                    <img ng-src="{{ vm.event.image_url }}" alt="{{ vm.event.name }}"
+                         style="width:96px;height:96px;border-radius:16px;object-fit:cover">
+                    <div>
+                        <h3 style="margin:0 0 .3rem">{{ vm.event.name }}</h3>
+                        <p style="margin:0 0 .6rem">{{ vm.event.summary }}</p>
+                        <div class="chips">
+                            <span class="chip">&#128197; {{ vm.U.longDate(vm.event.event_date) }}</span>
+                            <span class="chip">&#128339; {{ vm.U.time(vm.event.event_date) }}</span>
+                            <span class="chip">&#128205; {{ vm.event.venue }}, {{ vm.event.suburb }}</span>
+                            <span class="chip" ng-if="vm.event.is_free">Free entry</span>
+                            <span class="chip" ng-if="!vm.event.is_free">&#127915; {{ vm.U.money(vm.event.ticket_price) }} each</span>
+                            <span class="chip">&#128101; {{ vm.U.number(vm.seatsLeft()) }} places left</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- the form ---------- -->
+            <form class="panel" ng-submit="vm.submit()" name="regForm" novalidate reveal>
+                <h2>&#128221; Your details</h2>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="r-name">Full name *</label>
+                        <input id="r-name" type="text" ng-model="vm.form.full_name"
+                               placeholder="e.g. Zhang Wei" required autocomplete="name">
+                    </div>
+
+                    <div class="field">
+                        <label for="r-email">Email address *</label>
+                        <input id="r-email" type="email" ng-model="vm.form.email"
+                               placeholder="name@example.com" required autocomplete="email">
+                        <span class="hint">One registration per email address per event.</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="r-phone">Phone number</label>
+                        <input id="r-phone" type="text" ng-model="vm.form.phone"
+                               placeholder="e.g. 0311-8855-1021" autocomplete="tel">
+                    </div>
+
+                    <div class="field">
+                        <label for="r-tickets">Number of tickets *</label>
+                        <input id="r-tickets" type="number" min="1" max="20" step="1"
+                               ng-model="vm.form.tickets" required>
+                        <span class="hint">
+                            Total: <strong>{{ vm.U.money(vm.totalPrice()) }}</strong>
+                            <span ng-if="vm.event"> ({{ vm.U.money(vm.event.ticket_price) }} &times; {{ vm.form.tickets }})</span>
+                        </span>
+                    </div>
+
+                    <div class="field span-2">
+                        <label for="r-note">Anything we should know?</label>
+                        <textarea id="r-note" ng-model="vm.form.note"
+                                  placeholder="Accessibility needs, dietary requirements, who you are coming with&hellip;"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary btn-lg" type="submit" ng-disabled="vm.sending">
+                        {{ vm.sending ? 'Sending…' : 'Confirm registration &#10003;' }}
+                    </button>
+                    <a class="btn btn-ghost" ng-href="event.html?id={{ vm.eventId }}">Cancel</a>
+                    <span class="text-dim" style="font-size:.82rem">
+                        Submitting calls <code>POST /api/registrations</code>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Hebei Charity Events &middot; Xinliang Wang (24832805)</span>
+            <span>PROG2002 Assessment 3 &middot; registration page</span>
+        </div>
+    </div>
+</footer>
+
+<script src="vendor/angular.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

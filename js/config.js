@@ -1,8 +1,12 @@
 /* =====================================================================
- * PROG2002 A3 - config for the admin site.
- * Change API_BASE_URL to the URL of your deployed API when you upload
- * the admin site to cPanel. It must point at the SAME API the client
- * site uses.
+ * PROG2002 A3 - client-side website (AngularJS)
+ * config.js  -  the ONE place you change when deploying
+ * ---------------------------------------------------------------------
+ * Locally the API runs on https://24832805.it.scu.edu.au/api.
+ * After uploading the site to your SCU cPanel, change the line below to
+ * the URL of the API you deployed (for example
+ * http://yourusername.scudata.scu.edu.au/api  or whatever your tutor
+ * told you to use). Nothing else in the site has to be touched.
  * ===================================================================== */
 window.APP_CONFIG = {
     API_BASE_URL: 'https://24832805.it.scu.edu.au/api'

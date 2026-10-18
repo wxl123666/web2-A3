@@ -1,217 +1,408 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="adminApp">
+<html lang="en" ng-app="charityApp">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin dashboard | Hebei Charity Events</title>
-    <meta name="description" content="Administration dashboard for managing Hebei charity events.">
+    <title>Hebei Charity Events | Home</title>
+    <meta name="description" content="Discover and register for charity events across Hebei province - fun runs, galas, auctions, concerts and community drives.">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ffc94d'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23100b18'/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ff4d5e'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23fff'/><circle cx='48' cy='14' r='4' fill='%23ffc94d'/></svg>">
 </head>
-<body data-page="admin-list">
+<body data-page="home">
 <div class="texture"></div>
+<div class="lanterns"></div>
 
-<!-- ===================== NAVIGATION (on every admin page) ============= -->
+<!-- ===================== NAVIGATION (on every page) ===================== -->
 <header class="navbar">
-    <nav class="nav-inner" aria-label="Admin navigation">
+    <nav class="nav-inner" aria-label="Main navigation">
         <a class="brand" href="index.html">
-            <span class="brand-mark" style="background:linear-gradient(135deg,#ffc94d,#ff4d5e)">
+            <span class="brand-mark">
                 <svg viewBox="0 0 64 64" aria-hidden="true">
-                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#100b18"/>
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#fff"/>
+                    <circle cx="48" cy="14" r="4.5" fill="#2a0710" opacity=".35"/>
                 </svg>
             </span>
-            <span class="brand-text">Admin console<small>管理后台 &middot; PROG2002 A3</small></span>
+            <span class="brand-text">Hebei Charity Events<small>河北公益 &middot; PROG2002 A3</small></span>
         </a>
 
         <ul class="nav-links">
             <li><span class="nav-pill"></span></li>
-            <li><a data-nav="list" href="index.html">Events</a></li>
-            <li><a data-nav="new" href="new.html">New event</a></li>
-            <li><a href="index.html#registrations">Registrations</a></li>
+            <li><a data-nav="home" href="index.html">Home</a></li>
+            <li><a data-nav="search" href="search.html">Search</a></li>
+            <li><a data-nav="about" href="#about">Partners</a></li>
+            <li><a data-nav="contact" href="#contact">Contact</a></li>
         </ul>
 
         <div class="nav-cta">
-            <a class="btn btn-primary btn-sm" href="new.html">+ New event</a>
+            <a class="btn btn-primary btn-sm" href="search.html">Find an event</a>
         </div>
         <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
     </nav>
 </header>
 
-<main class="container" style="padding-top:2.6rem;padding-bottom:4rem" ng-controller="ListCtrl as vm">
+<main ng-controller="HomeCtrl as vm">
 
-    <div class="section-head" style="margin-bottom:.4rem">
-        <div>
-            <span class="eyebrow">&#128640; 管理后台 &middot; Staff only</span>
-            <h1 class="section-title">Charity event management</h1>
-            <p class="section-sub">
-                Every event in the database &mdash; <strong>active, past and suspended</strong> &mdash;
-                loaded from <code>GET /api/admin/events</code>. Use this console to create, update and
-                delete events.
-            </p>
-        </div>
-        <a class="link-more" href="new.html">Add an event &rarr;</a>
-    </div>
-
-    <!-- ===================== FEEDBACK ================================ -->
-    <div class="admin-alert" ng-class="vm.feedback.kind" ng-if="vm.feedback.message" role="alert">
-        <span class="ai">
-            <span ng-if="vm.feedback.kind === 'success'">&#10003;</span>
-            <span ng-if="vm.feedback.kind === 'error'">&#9888;</span>
-            <span ng-if="vm.feedback.kind === 'info'">&#8505;</span>
-        </span>
-        <span>{{ vm.feedback.message }}</span>
-    </div>
-
-    <div class="admin-alert error" ng-if="vm.error" role="alert">
-        <span class="ai">&#9888;</span><span>{{ vm.error }}</span>
-    </div>
-
-    <!-- ===================== DASHBOARD TILES ========================= -->
-    <div class="admin-tiles" ng-if="vm.stats">
-        <div class="tile is-red" reveal>
-            <div class="t-label">Total events</div>
-            <div class="t-value" count-up="vm.events.length"></div>
-            <div class="t-note">{{ vm.stats.upcoming_events }} upcoming</div>
-        </div>
-        <div class="tile is-jade" reveal>
-            <div class="t-label">Registrations</div>
-            <div class="t-value" count-up="vm.stats.total_registrations"></div>
-            <div class="t-note">{{ vm.stats.total_tickets }} tickets booked</div>
-        </div>
-        <div class="tile is-gold" reveal>
-            <div class="t-label">Raised</div>
-            <div class="t-value" count-up="vm.stats.total_raised" count-prefix="$"></div>
-            <div class="t-note">across all events</div>
-        </div>
-        <div class="tile is-cyan" reveal>
-            <div class="t-label">Categories</div>
-            <div class="t-value" count-up="vm.stats.categories"></div>
-            <div class="t-note">{{ vm.stats.organisations }} organisations</div>
-        </div>
-        <div class="tile is-violet" reveal>
-            <div class="t-label">Suspended</div>
-            <div class="t-value" count-up="vm.stats.suspended_events"></div>
-            <div class="t-note">hidden from the public site</div>
+    <!-- ===================== ERROR BANNER ============================= -->
+    <div class="container">
+        <div class="alert alert-error" ng-if="vm.state.error" role="alert" style="display:flex;margin-top:1.2rem">
+            <span class="ai">&#9888;</span><span class="msg">{{ vm.state.error }}</span>
         </div>
     </div>
 
-    <!-- ===================== LIST ==================================== -->
-    <section class="panel" id="events">
-        <div class="reg-head">
-            <h2 style="margin:0">&#128203; All events ({{ vm.events.length }})</h2>
-            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-                <select ng-model="vm.filter.status" style="padding:.45rem .7rem;border-radius:999px;
-                        background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text)">
-                    <option value="">Any status</option>
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="past">Past</option>
-                </select>
-                <input type="search" ng-model="vm.filter.q" placeholder="Search name, venue, city&hellip;"
-                       style="padding:.45rem .9rem;border-radius:999px;min-width:210px;
-                              background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text)">
+    <!-- ===================== HERO ==================================== -->
+    <section class="hero container">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <span class="tagline"><span class="spark">&#10024;</span> 河北 &middot; Hebei Province &middot; Live data from the API</span>
+
+                <h1>Turn a day out into<br><span class="grad">a lifetime of change.</span></h1>
+
+                <p class="lead">
+                    Hebei Charity Events connects people across Shijiazhuang, Baoding, Tangshan,
+                    Qinhuangdao, Handan, Langfang, Chengde and Zhangjiakou with the fundraisers that
+                    keep our province caring. Pick an event, choose how many tickets you need and
+                    register online &mdash; every ticket you buy is a donation that stays local.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn btn-primary btn-lg" href="#upcoming">Browse upcoming events &#8594;</a>
+                    <a class="btn btn-ghost btn-lg" href="search.html">Search by date, city or category</a>
+                </div>
+            </div>
+
+            <!-- rotating spotlight: AngularJS swaps vm.spot every few seconds -->
+            <div class="hero-side">
+                <div class="spotlight" ng-if="vm.spot">
+                    <div class="spotlight-media">
+                        <img ng-src="{{ vm.spot.image_url }}" alt="{{ vm.spot.name }}">
+                    </div>
+                    <div class="spotlight-body">
+                        <span class="spot-light-label">&#9733; Next up</span>
+                        <h3 style="margin:.5rem 0 .35rem;font-size:1.15rem">{{ vm.spot.name }}</h3>
+                        <p class="text-soft" style="margin:0;font-size:.86rem">
+                            {{ vm.U.shortDate(vm.spot.event_date) }} &middot; {{ vm.U.time(vm.spot.event_date) }}
+                            &middot; {{ vm.spot.suburb }}
+                        </p>
+                        <a class="btn btn-ghost btn-sm mt-2" ng-href="event.html?id={{ vm.spot.event_id }}">View details &#8594;</a>
+                    </div>
+                    <div class="spot-dots">
+                        <span ng-repeat="e in vm.upcoming.slice(0,4) track by $index"
+                              ng-class="{ 'on': $index === vm.spotIndex }"></span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="table-wrap">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Date</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Price</th>
-                        <th>Seats</th>
-                        <th>Reg.</th>
-                        <th style="text-align:right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="e in vm.events track by e.event_id"
-                        ng-if="vm.matches(e)">
-                        <td>
-                            <span class="ev-name">{{ e.name }}</span>
-                            <span class="ev-sub">{{ e.category.name }} &middot; {{ e.organisation.name }}</span>
-                        </td>
-                        <td>{{ vm.U.shortDate(e.event_date) }}
-                            <span class="ev-sub">{{ vm.U.dateTime(e.event_date).slice(11) }}</span>
-                        </td>
-                        <td>{{ e.suburb }}, {{ e.city }}
-                            <span class="ev-sub">{{ e.venue }}</span>
-                        </td>
-                        <td>
-                            <span class="st" ng-class="e.status === 'suspended' ? 'st-suspended'
-                                        : (e.time_status === 'past' ? 'st-past' : 'st-active')">
-                                {{ e.status === 'suspended' ? 'Suspended' : e.time_status }}
-                            </span>
-                        </td>
-                        <td>{{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}</td>
-                        <td>{{ vm.U.number(e.seats_taken) }} / {{ vm.U.number(e.capacity) }}</td>
-                        <td>
-                            <span class="tickets-pill">{{ e.registration_count }}</span>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <a class="btn btn-ghost btn-xs" ng-href="edit.html?id={{ e.event_id }}">Edit</a>
-                                <button class="btn btn-danger btn-xs" type="button" ng-click="vm.remove(e)">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- ===================== BENTO STATISTICS ==================== -->
+        <div class="bento" ng-if="vm.stats">
+            <div class="bento-cell wide" reveal>
+                <div class="b-label">Raised so far</div>
+                <div class="b-value" count-up="vm.stats.total_raised" count-prefix="$"></div>
+                <div class="b-note">across every published event</div>
+                <div class="sparkline">
+                    <i ng-repeat="e in vm.upcoming.slice(0,10) track by $index"
+                       ng-style="{ 'height': (vm.stats.total_tickets ? (e.tickets_booked / vm.stats.total_tickets * 100) : 20) + '%' }"></i>
+                </div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Upcoming events</div>
+                <div class="b-value" count-up="vm.stats.upcoming_events" count-suffix="+"></div>
+                <div class="b-note">ready to join</div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Registrations</div>
+                <div class="b-value" count-up="vm.stats.total_registrations"></div>
+                <div class="b-note">{{ vm.stats.total_tickets }} tickets booked</div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Cities</div>
+                <div class="b-value" count-up="8"></div>
+                <div class="b-note">across Hebei</div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Categories</div>
+                <div class="b-value" count-up="vm.stats.categories"></div>
+                <div class="b-note">ways to give</div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Partner charities</div>
+                <div class="b-value" count-up="vm.stats.organisations"></div>
+                <div class="b-note">registered</div>
+            </div>
+            <div class="bento-cell" reveal>
+                <div class="b-label">Events suspended</div>
+                <div class="b-value" count-up="vm.stats.suspended_events"></div>
+                <div class="b-note">hidden from the public site</div>
+            </div>
         </div>
-
-        <p class="text-dim" style="font-size:.82rem;margin:1rem 0 0">
-            &#128274; An event can only be deleted while it has <strong>no registrations</strong>.
-            If registrations exist the API answers <code>409 Conflict</code> and the deletion is refused &mdash;
-            open the event and remove the registrations first, or suspend it instead.
-        </p>
     </section>
 
-    <!-- ===================== REGISTRATION OVERVIEW =================== -->
-    <section class="panel mt-3" id="registrations">
-        <h2>&#127915; Registration summary</h2>
-        <p class="text-dim" style="font-size:.88rem">
-            Registrations are managed from each event's edit page, where the full list for that
-            event is displayed together with the ability to remove one.
-        </p>
+    <!-- ===================== CATEGORY RAIL ============================ -->
+    <section class="section container" id="categories">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#127183; Browse by cause</span>
+                <h2 class="section-title">What kind of event are you looking for?</h2>
+            </div>
+            <p class="section-sub" style="max-width:38ch">Every category carries its own illustration. Click one to jump straight to filtered results.</p>
+        </div>
+        <div class="cat-rail">
+            <a class="cat-chip" ng-repeat="c in vm.categories track by c.category_id"
+               ng-href="search.html?category={{ c.category_id }}">
+                <span class="ci"><img ng-src="{{ c.image || 'assets/img/fete.svg' }}" alt=""></span>
+                <span>{{ c.name }}</span>
+                <b>{{ c.event_count }}</b>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===================== UPCOMING EVENTS ========================== -->
+    <section class="section container" id="upcoming">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#128197; 即将开始 &middot; Happening soon</span>
+                <h2 class="section-title">Upcoming charity events</h2>
+                <p class="section-sub">Loaded live from <code>GET /api/events?time=upcoming</code>. Past and suspended events are removed by the API, not by the browser.</p>
+            </div>
+            <a class="link-more" href="search.html">See all &rarr;</a>
+        </div>
+
+        <div class="event-grid" ng-if="vm.state.loading">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+
         <div class="event-grid">
-            <article class="event-card" ng-repeat="e in vm.events track by e.event_id"
-                     ng-if="e.registration_count > 0" reveal style="padding:1.1rem">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem">
-                    <div>
-                        <h3 style="margin:0;font-size:1rem">{{ e.name }}</h3>
-                        <p class="card-summary" style="margin:.3rem 0 0">{{ vm.U.shortDate(e.event_date) }}</p>
+            <article class="event-card" ng-repeat="e in vm.upcoming track by e.event_id" reveal>
+                <a class="card-media" ng-href="event.html?id={{ e.event_id }}" aria-label="{{ e.name }}">
+                    <img ng-src="{{ e.image_url }}" alt="{{ e.name }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge cat" ng-style="{ 'background': e.category.colour }">{{ e.category.name }}</span>
+                        <span class="badge featured" ng-if="e.featured">&#9733; Featured</span>
+                        <span class="badge free" ng-if="e.is_free">Free entry</span>
+                        <span class="badge soon" ng-if="e.days_until <= 7">&#9201; {{ vm.U.countdown(e.days_until) }}</span>
                     </div>
-                    <span class="tickets-pill">{{ e.registration_count }}</span>
+                </a>
+                <div class="card-body">
+                    <h3>{{ e.name }}</h3>
+                    <p class="card-summary">{{ e.summary }}</p>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#128197;</span>{{ vm.U.longDate(e.event_date) }}
+                            <em class="text-dim">({{ vm.U.countdown(e.days_until) }})</em></li>
+                        <li><span class="mi">&#128339;</span>{{ vm.U.time(e.event_date) }}</li>
+                        <li><span class="mi">&#128205;</span>{{ e.venue }}, {{ e.suburb }}</li>
+                        <li><span class="mi">&#127891;</span>{{ e.organisation.name }}</li>
+                        <li><span class="mi">&#127915;</span>{{ e.registration_count }} registered</li>
+                    </ul>
+                    <div class="progress">
+                        <div class="progress-head">
+                            <span>{{ vm.U.money(e.goal.raised_amount) }} raised</span>
+                            <b>{{ e.goal.percent }}%</b>
+                        </div>
+                        <div class="bar"><span ng-style="{ 'width': e.goal.percent + '%' }"></span></div>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <a class="btn btn-ghost btn-xs" ng-href="edit.html?id={{ e.event_id }}">View registrations</a>
+                <div class="card-foot">
+                    <span class="price" ng-class="{ 'free': e.is_free }">
+                        {{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}
+                    </span>
+                    <span style="display:flex;align-items:center;gap:.9rem">
+                        <small class="text-dim">{{ vm.seatsLeft(e) }} places left</small>
+                        <a class="card-link" ng-href="event.html?id={{ e.event_id }}">Details &#8594;</a>
+                    </span>
                 </div>
             </article>
         </div>
-        <div class="empty" ng-if="!vm.events.length" style="padding:2rem">
-            <h3>No events yet</h3>
-            <p>Use the <strong>New event</strong> form to add the first one.</p>
+
+        <div class="empty" ng-if="!vm.state.loading && !vm.upcoming.length">
+            <h3>No upcoming events</h3>
+            <p>New events are added by our partner charities every week &mdash; please check back soon.</p>
+        </div>
+    </section>
+
+    <!-- ===================== FEATURED ================================= -->
+    <section class="section container" id="featured" ng-if="vm.featured.length">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#11088; 精选 &middot; Don't miss these</span>
+                <h2 class="section-title">Featured fundraisers</h2>
+                <p class="section-sub">A shortlist of the events our partner charities most want you to see.</p>
+            </div>
+        </div>
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="e in vm.featured track by e.event_id" reveal>
+                <a class="card-media" ng-href="event.html?id={{ e.event_id }}">
+                    <img ng-src="{{ e.image_url }}" alt="{{ e.name }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge cat" ng-style="{ 'background': e.category.colour }">{{ e.category.name }}</span>
+                        <span class="badge featured">&#9733; Featured</span>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h3>{{ e.name }}</h3>
+                    <p class="card-summary">{{ e.summary }}</p>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#128197;</span>{{ vm.U.longDate(e.event_date) }}</li>
+                        <li><span class="mi">&#128205;</span>{{ e.venue }}, {{ e.suburb }}</li>
+                    </ul>
+                </div>
+                <div class="card-foot">
+                    <span class="price" ng-class="{ 'free': e.is_free }">
+                        {{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}
+                    </span>
+                    <a class="card-link" ng-href="event.html?id={{ e.event_id }}">Details &#8594;</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===================== PAST EVENTS ============================== -->
+    <section class="section container" id="past" ng-if="vm.past.length">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#9202; 已完成 &middot; Recently completed</span>
+                <h2 class="section-title">Thank you, Hebei</h2>
+                <p class="section-sub">Events whose date has passed are labelled <strong>past</strong> automatically &mdash; the comparison happens in SQL against <code>CURDATE()</code>, not in the browser.</p>
+            </div>
+        </div>
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="e in vm.past track by e.event_id" reveal>
+                <a class="card-media" ng-href="event.html?id={{ e.event_id }}">
+                    <img ng-src="{{ e.image_url }}" alt="{{ e.name }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge cat" ng-style="{ 'background': e.category.colour }">{{ e.category.name }}</span>
+                        <span class="badge past">Completed</span>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h3>{{ e.name }}</h3>
+                    <p class="card-summary">{{ e.summary }}</p>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#128197;</span>{{ vm.U.longDate(e.event_date) }}</li>
+                        <li><span class="mi">&#128176;</span>{{ vm.U.money(e.goal.raised_amount) }} raised</li>
+                    </ul>
+                </div>
+                <div class="card-foot">
+                    <span class="price" ng-class="{ 'free': e.is_free }">
+                        {{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}
+                    </span>
+                    <a class="card-link" ng-href="event.html?id={{ e.event_id }}">Details &#8594;</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===================== PARTNER CHARITIES ======================== -->
+    <section class="section container" id="about">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#129309; 我们的伙伴 &middot; Our partners</span>
+                <h2 class="section-title">The charities behind the events</h2>
+                <p class="section-sub">Every event on this site is hosted by one of these registered Hebei organisations.</p>
+            </div>
+        </div>
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="o in vm.organisations track by o.organisation_id" reveal>
+                <div class="card-media" style="height:110px;background:linear-gradient(135deg,rgba(255,77,94,.35),rgba(255,201,77,.25))">
+                    <span class="emoji-fallback" style="font-size:3rem">{{ o.logo }}</span>
+                    <div class="card-badges"><span class="badge">{{ o.event_count }} events</span></div>
+                </div>
+                <div class="card-body">
+                    <h3>{{ o.name }}</h3>
+                    <p class="card-summary">{{ o.mission }}</p>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#9993;</span>{{ o.contact_email }}</li>
+                        <li><span class="mi">&#9742;</span>{{ o.phone || '—' }}</li>
+                        <li><span class="mi">&#128279;</span>{{ o.website || '—' }}</li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+
+        <div class="panel mt-3">
+            <h2>&#128161; Our mission</h2>
+            <p>
+                We exist to make giving easy. Too many small Hebei charities run brilliant events that
+                nobody hears about, while thousands of residents would happily take part if they only knew.
+                This platform closes that gap: one searchable calendar of every registered charity event in
+                the province, with transparent fundraising progress and online registration so donors can
+                book a place in seconds.
+            </p>
+            <div class="chips mt-2">
+                <span class="chip">&#10003; Registered charities only</span>
+                <span class="chip">&#10003; Transparent fundraising goals</span>
+                <span class="chip">&#10003; Register in under a minute</span>
+                <span class="chip">&#10003; Policy-checked events</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== CONTACT ================================== -->
+    <section class="section container" id="contact">
+        <div class="panel" style="text-align:center;padding:3rem 2rem">
+            <span class="eyebrow">&#128222; 联系我们 &middot; Get in touch</span>
+            <h2 class="section-title">Thinking of running a fundraiser?</h2>
+            <p class="section-sub" style="margin-inline:auto">Send us the details and we will help you plan, promote and publish your event.</p>
+            <div class="chips" style="justify-content:center;margin-top:1.4rem">
+                <span class="chip">&#9993; hello@hebeicharityevents.org.cn</span>
+                <span class="chip">&#9742; +86 311 8800 0100</span>
+                <span class="chip">&#128205; 1 Gongyi Road, Shijiazhuang, Hebei</span>
+            </div>
+            <div class="mt-3">
+                <a class="btn btn-violet btn-lg" href="search.html">Browse every event</a>
+            </div>
         </div>
     </section>
 </main>
 
+<!-- ===================== FOOTER ======================================= -->
 <footer class="footer">
     <div class="container">
+        <div class="footer-grid">
+            <div>
+                <a class="brand" href="index.html">
+                    <span class="brand-mark">
+                        <svg viewBox="0 0 64 64" aria-hidden="true">
+                            <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#fff"/>
+                            </svg>
+                    </span>
+                    <span class="brand-text">Hebei Charity Events<small>河北公益 &middot; PROG2002 A3</small></span>
+                </a>
+                <p style="margin-top:.9rem">
+                    A student project built for PROG2002 Web Development II. All organisations, events,
+                    registrations and donation figures are sample data created for assessment purposes.
+                </p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="search.html">Search events</a></li>
+                    <li><a href="#about">Our partners</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Built with</h4>
+                <ul>
+                    <li>Node.js &amp; Express (REST API)</li>
+                    <li>MySQL 8 / connection pool</li>
+                    <li>AngularJS 1.8 (client &amp; admin)</li>
+                    <li>HTML, CSS, DOM &amp; Promises</li>
+                </ul>
+            </div>
+        </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 Hebei Charity Events &middot; Admin console &middot; Xinliang Wang (24832805)</span>
-            <span>PROG2002 Assessment 3 &middot; admin-side website</span>
+            <span>&copy; 2026 Hebei Charity Events &middot; Xinliang Wang (24832805)</span>
+            <span>Assessment 3 &middot; complete dynamic website</span>
         </div>
     </div>
 </footer>
 
+<!-- ===================== SCRIPTS ====================================== -->
 <script src="vendor/angular.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
 <script src="js/directives.js"></script>
-<script src="js/dashboard.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="charityApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event details | Hebei Charity Events</title>
+    <meta name="description" content="Full details, ticket information, registrations and fundraising progress for a Hebei charity event.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ff4d5e'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23fff'/><circle cx='48' cy='14' r='4' fill='%23ffc94d'/></svg>">
+</head>
+<body data-page="event">
+<div class="texture"></div>
+<div class="lanterns"></div>
+
+<!-- ===================== NAVIGATION =================================== -->
+<header class="navbar">
+    <nav class="nav-inner" aria-label="Main navigation">
+        <a class="brand" href="index.html">
+            <span class="brand-mark">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#fff"/>
+                </svg>
+            </span>
+            <span class="brand-text">Hebei Charity Events<small>河北公益 &middot; PROG2002 A3</small></span>
+        </a>
+        <ul class="nav-links">
+            <li><span class="nav-pill"></span></li>
+            <li><a data-nav="home" href="index.html">Home</a></li>
+            <li><a data-nav="search" href="search.html">Search</a></li>
+            <li><a href="index.html#about">Partners</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a class="btn btn-primary btn-sm" href="search.html">Find an event</a>
+        </div>
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<main class="container" style="padding-top:2.2rem;padding-bottom:4rem" ng-controller="EventCtrl as vm">
+
+    <nav class="text-dim" style="font-size:.85rem;margin-bottom:1.1rem" aria-label="Breadcrumb">
+        <a href="index.html">Home</a> &rsaquo; <a href="search.html">Search</a> &rsaquo;
+        <span>{{ vm.event ? vm.event.name : 'Event' }}</span>
+    </nav>
+
+    <div class="alert alert-error" ng-if="vm.state.error" role="alert" style="display:flex">
+        <span class="ai">&#9888;</span><span class="msg">{{ vm.state.error }}</span>
+    </div>
+
+    <div class="panel" ng-if="vm.state.loading" style="text-align:center;padding:3rem">
+        <div class="skeleton-card" style="height:180px"></div>
+        <p class="text-dim" style="margin-top:1rem">Loading event from the API&hellip;</p>
+    </div>
+
+    <!-- ===================== EVENT HERO ================================ -->
+    <section class="detail-hero" ng-if="vm.event">
+        <img class="dh-img" ng-src="{{ vm.event.image_url }}" alt="{{ vm.event.name }}">
+        <div class="detail-hero-inner">
+            <div class="card-badges" style="position:static;margin-bottom:.7rem">
+                <span class="badge cat" ng-style="{ 'background': vm.event.category.colour }">{{ vm.event.category.name }}</span>
+                <span class="badge free" ng-if="vm.event.is_free">Free entry</span>
+                <span class="badge featured" ng-if="vm.event.featured">&#9733; Featured</span>
+                <span class="badge past" ng-if="vm.event.time_status === 'past'">Completed</span>
+                <span class="badge soon" ng-if="vm.event.time_status !== 'past'">&#9201; {{ vm.U.countdown(vm.event.days_until) }}</span>
+            </div>
+            <h1>{{ vm.event.name }}</h1>
+            <p class="lead mb-0" style="color:#e9dff2;max-width:70ch">{{ vm.event.summary }}</p>
+        </div>
+    </section>
+
+    <!-- ===================== BODY ===================================== -->
+    <div class="detail-grid" ng-if="vm.event">
+
+        <div style="display:grid;gap:1.5rem">
+            <section class="panel" reveal>
+                <h2>&#128220; About this event</h2>
+                <p style="white-space:pre-line">{{ vm.event.description }}</p>
+            </section>
+
+            <!-- ===== NEW IN A3: the registration list ================= -->
+            <section class="panel" reveal>
+                <div class="reg-head">
+                    <h2 style="margin:0">&#127915; Who has registered</h2>
+                    <span class="reg-count">{{ vm.event.registrations.length }} registration(s) &middot;
+                        {{ vm.event.tickets_booked }} ticket(s)</span>
+                </div>
+                <p class="text-dim" style="font-size:.85rem;margin-top:0">
+                    Sorted by the date the tickets were purchased, newest first &mdash;
+                    <code>GET /api/events/{{ vm.eventId }}</code> returns them in this order.
+                </p>
+
+                <table class="reg-table" ng-if="vm.event.registrations.length">
+                    <thead>
+                        <tr>
+                            <th>Registered</th>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Tickets</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="r in vm.event.registrations track by r.registration_id">
+                            <td>{{ vm.U.dateTime(r.registration_date) }}</td>
+                            <td>
+                                <div class="reg-who">
+                                    <span class="avatar">{{ vm.U.initials(r.full_name) }}</span>
+                                    <span>{{ r.full_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                {{ r.email }}
+                                <small class="text-dim" style="display:block">{{ r.phone || '—' }}</small>
+                            </td>
+                            <td><span class="tickets-pill">{{ r.tickets }}</span></td>
+                            <td class="text-dim">{{ r.note || '—' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="empty" ng-if="!vm.event.registrations.length" style="padding:2rem 1rem">
+                    <h3>No registrations yet</h3>
+                    <p>Be the first to book a place &mdash; click <strong>Register now</strong>.</p>
+                </div>
+            </section>
+
+            <section class="panel" reveal>
+                <h2>&#128197; Event details</h2>
+                <dl class="info-rows">
+                    <div><dt>Date</dt><dd>{{ vm.U.longDate(vm.event.event_date) }}</dd></div>
+                    <div><dt>Start time</dt><dd>{{ vm.U.time(vm.event.event_date) }}</dd></div>
+                    <div><dt>End</dt><dd>{{ vm.event.end_date ? vm.U.dateTime(vm.event.end_date) : '—' }}</dd></div>
+                    <div><dt>Venue</dt><dd>{{ vm.event.venue }}</dd></div>
+                    <div><dt>Address</dt><dd>{{ vm.event.address }}, {{ vm.event.suburb }}, {{ vm.event.city }}</dd></div>
+                    <div><dt>Category</dt><dd>{{ vm.event.category.name }}</dd></div>
+                    <div><dt>Ticket</dt><dd>{{ vm.event.is_free ? 'Free entry' : vm.U.money(vm.event.ticket_price) }}</dd></div>
+                    <div><dt>Capacity</dt><dd>{{ vm.U.number(vm.event.capacity) }} places</dd></div>
+                </dl>
+            </section>
+
+            <section class="panel" reveal>
+                <h2>&#129309; Hosted by</h2>
+                <div class="org-hero">
+                    <div class="org-avatar">{{ vm.event.organisation.logo }}</div>
+                    <div>
+                        <h3 style="margin:0 0 .3rem">{{ vm.event.organisation.name }}</h3>
+                        <p style="margin:0 0 .6rem">{{ vm.event.organisation.mission }}</p>
+                        <div class="chips">
+                            <span class="chip">&#9993; {{ vm.event.organisation.contact_email }}</span>
+                            <span class="chip">&#9742; {{ vm.event.organisation.phone }}</span>
+                            <span class="chip">&#128279; {{ vm.event.organisation.website }}</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside style="display:grid;gap:1.5rem">
+            <section class="panel goal-panel" reveal>
+                <h2>&#127919; Goal vs progress</h2>
+                <p class="text-soft" style="margin-top:0;font-size:.92rem">{{ vm.event.goal.title }}</p>
+                <div class="goal-figures">
+                    <div>
+                        <div class="goal-raised">{{ vm.U.money(vm.event.goal.raised_amount) }}</div>
+                        <div class="goal-target">raised so far</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--gold)">{{ vm.event.goal.percent }}%</div>
+                        <div class="goal-target">of {{ vm.U.money(vm.event.goal.target_amount) }}</div>
+                    </div>
+                </div>
+                <div class="bar"><span ng-style="{ 'width': vm.event.goal.percent + '%' }"></span></div>
+                <p class="text-dim" style="font-size:.82rem;margin:.9rem 0 0">
+                    {{ vm.event.goal.unit_label }} &middot; {{ vm.event.donation_count }} donations so far
+                </p>
+            </section>
+
+            <section class="panel" reveal>
+                <h2>&#127915; Tickets</h2>
+                <div class="ticket-box">
+                    <div>
+                        <div class="tp">{{ vm.event.is_free ? 'Free' : vm.U.money(vm.event.ticket_price) }}</div>
+                        <small>per person &middot; 100% of the price is a donation</small>
+                    </div>
+                </div>
+
+                <!-- The Register button now opens the new registration page -->
+                <a class="btn btn-primary btn-lg" style="width:100%;margin-top:1.1rem"
+                   ng-href="register.html?event={{ vm.event.event_id }}"
+                   ng-if="vm.canRegister()">Register now &#8594;</a>
+
+                <div ng-if="!vm.canRegister()" class="alert alert-info" style="display:flex;margin-top:1.1rem">
+                    <span class="ai">&#128274;</span>
+                    <span class="msg">
+                        {{ vm.event.time_status === 'past'
+                             ? 'This event has already taken place.'
+                             : 'This event is fully booked.' }}
+                    </span>
+                </div>
+
+                <p class="text-dim" style="font-size:.8rem;text-align:center;margin:.8rem 0 0">
+                    You choose how many tickets you want on the registration page.
+                </p>
+            </section>
+
+            <section class="panel" reveal>
+                <h2>&#128101; Availability</h2>
+                <div class="bar" style="margin:.4rem 0 .6rem">
+                    <span ng-style="{ 'width': vm.seatsPercent() + '%' }"></span>
+                </div>
+                <p class="text-soft" style="font-size:.9rem;margin:0">
+                    {{ vm.U.number(vm.event.seats_taken) }} of {{ vm.U.number(vm.event.capacity) }} places taken
+                    &middot; <strong>{{ vm.U.number(vm.seatsLeft()) }} left</strong>
+                </p>
+            </section>
+
+            <section class="panel" reveal ng-if="vm.event.recent_donations.length">
+                <h2>&#128150; Recent support</h2>
+                <ul class="donation-list">
+                    <li ng-repeat="d in vm.event.recent_donations">
+                        <b>{{ d.donor }}</b> gave {{ vm.U.money(d.amount) }}
+                        <span class="text-dim" style="display:block;font-size:.8rem">
+                            {{ vm.U.dateTime(d.donated_at) }} &middot; {{ d.message || '—' }}
+                        </span>
+                    </li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+
+    <!-- ===================== SIMILAR EVENTS =========================== -->
+    <section class="section" ng-if="vm.similar.length" style="padding-left:0;padding-right:0">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">&#128161; You might also like</span>
+                <h2 class="section-title">More events in this category</h2>
+            </div>
+        </div>
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="e in vm.similar track by e.event_id" reveal>
+                <a class="card-media" ng-href="event.html?id={{ e.event_id }}">
+                    <img ng-src="{{ e.image_url }}" alt="{{ e.name }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge cat" ng-style="{ 'background': e.category.colour }">{{ e.category.name }}</span>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h3>{{ e.name }}</h3>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#128197;</span>{{ vm.U.longDate(e.event_date) }}</li>
+                        <li><span class="mi">&#128205;</span>{{ e.venue }}, {{ e.suburb }}</li>
+                    </ul>
+                </div>
+                <div class="card-foot">
+                    <span class="price" ng-class="{ 'free': e.is_free }">
+                        {{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}
+                    </span>
+                    <a class="card-link" ng-href="event.html?id={{ e.event_id }}">Details &#8594;</a>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Hebei Charity Events &middot; Xinliang Wang (24832805)</span>
+            <span>PROG2002 Assessment 3 &middot; client-side website</span>
+        </div>
+    </div>
+</footer>
+
+<script src="vendor/angular.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/event.js"></script>
+</body>
+</html>

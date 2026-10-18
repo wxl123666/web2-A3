@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="charityApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search events | Hebei Charity Events</title>
+    <meta name="description" content="Filter Hebei charity events by date, city or category.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ff4d5e'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23fff'/><circle cx='48' cy='14' r='4' fill='%23ffc94d'/></svg>">
+</head>
+<body data-page="search">
+<div class="texture"></div>
+<div class="lanterns"></div>
+
+<!-- ===================== NAVIGATION =================================== -->
+<header class="navbar">
+    <nav class="nav-inner" aria-label="Main navigation">
+        <a class="brand" href="index.html">
+            <span class="brand-mark">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#fff"/>
+                </svg>
+            </span>
+            <span class="brand-text">Hebei Charity Events<small>河北公益 &middot; PROG2002 A3</small></span>
+        </a>
+        <ul class="nav-links">
+            <li><span class="nav-pill"></span></li>
+            <li><a data-nav="home" href="index.html">Home</a></li>
+            <li><a data-nav="search" href="search.html">Search</a></li>
+            <li><a href="index.html#about">Partners</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a class="btn btn-primary btn-sm" href="index.html">Back to home</a>
+        </div>
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<main ng-controller="SearchCtrl as vm" class="container" style="padding-top:3rem">
+
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">&#128269; 搜索 &middot; Find your event</span>
+            <h1 class="section-title">Search charity events</h1>
+            <p class="section-sub">
+                Filter by <strong>date</strong>, <strong>city</strong> and <strong>category</strong> &mdash;
+                one criterion on its own or all three together. Every search calls
+                <code>GET /api/events/search</code>.
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-error" ng-if="vm.state.error" role="alert" style="display:flex">
+        <span class="ai">&#9888;</span><span class="msg">{{ vm.state.error }}</span>
+    </div>
+
+    <!-- ===================== FILTER PANEL ============================= -->
+    <form class="filter-panel" ng-submit="vm.search()" novalidate>
+        <div class="filter-grid">
+            <div class="field">
+                <label for="f-date">Date (on or after)</label>
+                <input id="f-date" type="date" ng-model="vm.criteria.date">
+            </div>
+
+            <div class="field">
+                <label for="f-location">City / suburb / venue</label>
+                <input id="f-location" type="text" ng-model="vm.criteria.location"
+                       placeholder="e.g. Shijiazhuang, Qinhuangdao">
+            </div>
+
+            <div class="field">
+                <label for="f-category">Category</label>
+                <select id="f-category" ng-model="vm.criteria.category">
+                    <option value="">Any category</option>
+                    <option ng-repeat="c in vm.categories track by c.category_id"
+                            value="{{ c.category_id }}">{{ c.name }} ({{ c.event_count }})</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="f-price">Maximum ticket price</label>
+                <input id="f-price" type="number" min="0" step="1" ng-model="vm.criteria.max_price"
+                       placeholder="e.g. 30">
+            </div>
+        </div>
+
+        <label class="check mt-2" for="f-free">
+            <input id="f-free" type="checkbox" ng-model="vm.criteria.free">
+            Free events only
+        </label>
+
+        <div class="filter-actions mt-2">
+            <button class="btn btn-primary" type="submit">&#128269; Search events</button>
+            <button class="btn btn-ghost" type="button" ng-click="vm.clear()">Clear filters</button>
+            <span class="text-dim" style="align-self:center">
+                {{ vm.results.length }} result(s)
+                <span ng-if="vm.hasCriteria()">for your filters</span>
+                <span ng-if="!vm.hasCriteria()">showing every published event</span>
+            </span>
+        </div>
+    </form>
+
+    <!-- ===================== RESULTS ================================== -->
+    <section class="section" style="padding-top:2.4rem">
+        <div class="event-grid" ng-if="vm.state.loading">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="e in vm.results track by e.event_id" reveal>
+                <a class="card-media" ng-href="event.html?id={{ e.event_id }}">
+                    <img ng-src="{{ e.image_url }}" alt="{{ e.name }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge cat" ng-style="{ 'background': e.category.colour }">{{ e.category.name }}</span>
+                        <span class="badge free" ng-if="e.is_free">Free entry</span>
+                        <span class="badge past" ng-if="e.time_status === 'past'">Completed</span>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h3>{{ e.name }}</h3>
+                    <p class="card-summary">{{ e.summary }}</p>
+                    <ul class="meta-list">
+                        <li><span class="mi">&#128197;</span>{{ vm.U.longDate(e.event_date) }}</li>
+                        <li><span class="mi">&#128339;</span>{{ vm.U.time(e.event_date) }}</li>
+                        <li><span class="mi">&#128205;</span>{{ e.venue }}, {{ e.suburb }}, {{ e.city }}</li>
+                        <li><span class="mi">&#127891;</span>{{ e.organisation.name }}</li>
+                    </ul>
+                    <div class="progress">
+                        <div class="progress-head">
+                            <span>{{ vm.U.money(e.goal.raised_amount) }} raised</span>
+                            <b>{{ e.goal.percent }}%</b>
+                        </div>
+                        <div class="bar"><span ng-style="{ 'width': e.goal.percent + '%' }"></span></div>
+                    </div>
+                </div>
+                <div class="card-foot">
+                    <span class="price" ng-class="{ 'free': e.is_free }">
+                        {{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}
+                    </span>
+                    <span style="display:flex;align-items:center;gap:.9rem">
+                        <small class="text-dim">{{ vm.seatsLeft(e) }} places left</small>
+                        <a class="card-link" ng-href="event.html?id={{ e.event_id }}">Details &#8594;</a>
+                    </span>
+                </div>
+            </article>
+        </div>
+
+        <div class="empty" ng-if="!vm.state.loading && !vm.results.length">
+            <div class="ei">&#128269;</div>
+            <h3>No events match those filters</h3>
+            <p>
+                Try widening the date, removing the category, or clearing the filters to see
+                everything. Suspended events are never returned by the API.
+            </p>
+            <button class="btn btn-ghost mt-2" type="button" ng-click="vm.clear()">Clear filters</button>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Hebei Charity Events &middot; Xinliang Wang (24832805)</span>
+            <span>PROG2002 Assessment 3</span>
+        </div>
+    </div>
+</footer>
+
+<script src="vendor/angular.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/search.js"></script>
+</body>
+</html>
