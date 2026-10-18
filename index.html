@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin dashboard | Hebei Charity Events</title>
+    <meta name="description" content="Administration dashboard for managing Hebei charity events.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ffc94d'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23100b18'/></svg>">
+</head>
+<body data-page="admin-list">
+<div class="texture"></div>
+
+<!-- ===================== NAVIGATION (on every admin page) ============= -->
+<header class="navbar">
+    <nav class="nav-inner" aria-label="Admin navigation">
+        <a class="brand" href="index.html">
+            <span class="brand-mark" style="background:linear-gradient(135deg,#ffc94d,#ff4d5e)">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#100b18"/>
+                </svg>
+            </span>
+            <span class="brand-text">Admin console<small>管理后台 &middot; PROG2002 A3</small></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><span class="nav-pill"></span></li>
+            <li><a data-nav="list" href="index.html">Events</a></li>
+            <li><a data-nav="new" href="new.html">New event</a></li>
+            <li><a href="index.html#registrations">Registrations</a></li>
+        </ul>
+
+        <div class="nav-cta">
+            <a class="btn btn-primary btn-sm" href="new.html">+ New event</a>
+        </div>
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<main class="container" style="padding-top:2.6rem;padding-bottom:4rem" ng-controller="ListCtrl as vm">
+
+    <div class="section-head" style="margin-bottom:.4rem">
+        <div>
+            <span class="eyebrow">&#128640; 管理后台 &middot; Staff only</span>
+            <h1 class="section-title">Charity event management</h1>
+            <p class="section-sub">
+                Every event in the database &mdash; <strong>active, past and suspended</strong> &mdash;
+                loaded from <code>GET /api/admin/events</code>. Use this console to create, update and
+                delete events.
+            </p>
+        </div>
+        <a class="link-more" href="new.html">Add an event &rarr;</a>
+    </div>
+
+    <!-- ===================== FEEDBACK ================================ -->
+    <div class="admin-alert" ng-class="vm.feedback.kind" ng-if="vm.feedback.message" role="alert">
+        <span class="ai">
+            <span ng-if="vm.feedback.kind === 'success'">&#10003;</span>
+            <span ng-if="vm.feedback.kind === 'error'">&#9888;</span>
+            <span ng-if="vm.feedback.kind === 'info'">&#8505;</span>
+        </span>
+        <span>{{ vm.feedback.message }}</span>
+    </div>
+
+    <div class="admin-alert error" ng-if="vm.error" role="alert">
+        <span class="ai">&#9888;</span><span>{{ vm.error }}</span>
+    </div>
+
+    <!-- ===================== DASHBOARD TILES ========================= -->
+    <div class="admin-tiles" ng-if="vm.stats">
+        <div class="tile is-red" reveal>
+            <div class="t-label">Total events</div>
+            <div class="t-value" count-up="vm.events.length"></div>
+            <div class="t-note">{{ vm.stats.upcoming_events }} upcoming</div>
+        </div>
+        <div class="tile is-jade" reveal>
+            <div class="t-label">Registrations</div>
+            <div class="t-value" count-up="vm.stats.total_registrations"></div>
+            <div class="t-note">{{ vm.stats.total_tickets }} tickets booked</div>
+        </div>
+        <div class="tile is-gold" reveal>
+            <div class="t-label">Raised</div>
+            <div class="t-value" count-up="vm.stats.total_raised" count-prefix="$"></div>
+            <div class="t-note">across all events</div>
+        </div>
+        <div class="tile is-cyan" reveal>
+            <div class="t-label">Categories</div>
+            <div class="t-value" count-up="vm.stats.categories"></div>
+            <div class="t-note">{{ vm.stats.organisations }} organisations</div>
+        </div>
+        <div class="tile is-violet" reveal>
+            <div class="t-label">Suspended</div>
+            <div class="t-value" count-up="vm.stats.suspended_events"></div>
+            <div class="t-note">hidden from the public site</div>
+        </div>
+    </div>
+
+    <!-- ===================== LIST ==================================== -->
+    <section class="panel" id="events">
+        <div class="reg-head">
+            <h2 style="margin:0">&#128203; All events ({{ vm.events.length }})</h2>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+                <select ng-model="vm.filter.status" style="padding:.45rem .7rem;border-radius:999px;
+                        background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text)">
+                    <option value="">Any status</option>
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="past">Past</option>
+                </select>
+                <input type="search" ng-model="vm.filter.q" placeholder="Search name, venue, city&hellip;"
+                       style="padding:.45rem .9rem;border-radius:999px;min-width:210px;
+                              background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text)">
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Seats</th>
+                        <th>Reg.</th>
+                        <th style="text-align:right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="e in vm.events track by e.event_id"
+                        ng-if="vm.matches(e)">
+                        <td>
+                            <span class="ev-name">{{ e.name }}</span>
+                            <span class="ev-sub">{{ e.category.name }} &middot; {{ e.organisation.name }}</span>
+                        </td>
+                        <td>{{ vm.U.shortDate(e.event_date) }}
+                            <span class="ev-sub">{{ vm.U.dateTime(e.event_date).slice(11) }}</span>
+                        </td>
+                        <td>{{ e.suburb }}, {{ e.city }}
+                            <span class="ev-sub">{{ e.venue }}</span>
+                        </td>
+                        <td>
+                            <span class="st" ng-class="e.status === 'suspended' ? 'st-suspended'
+                                        : (e.time_status === 'past' ? 'st-past' : 'st-active')">
+                                {{ e.status === 'suspended' ? 'Suspended' : e.time_status }}
+                            </span>
+                        </td>
+                        <td>{{ e.is_free ? 'Free' : vm.U.money(e.ticket_price) }}</td>
+                        <td>{{ vm.U.number(e.seats_taken) }} / {{ vm.U.number(e.capacity) }}</td>
+                        <td>
+                            <span class="tickets-pill">{{ e.registration_count }}</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <a class="btn btn-ghost btn-xs" ng-href="edit.html?id={{ e.event_id }}">Edit</a>
+                                <button class="btn btn-danger btn-xs" type="button" ng-click="vm.remove(e)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="text-dim" style="font-size:.82rem;margin:1rem 0 0">
+            &#128274; An event can only be deleted while it has <strong>no registrations</strong>.
+            If registrations exist the API answers <code>409 Conflict</code> and the deletion is refused &mdash;
+            open the event and remove the registrations first, or suspend it instead.
+        </p>
+    </section>
+
+    <!-- ===================== REGISTRATION OVERVIEW =================== -->
+    <section class="panel mt-3" id="registrations">
+        <h2>&#127915; Registration summary</h2>
+        <p class="text-dim" style="font-size:.88rem">
+            Registrations are managed from each event's edit page, where the full list for that
+            event is displayed together with the ability to remove one.
+        </p>
+        <div class="event-grid">
+            <article class="event-card" ng-repeat="e in vm.events track by e.event_id"
+                     ng-if="e.registration_count > 0" reveal style="padding:1.1rem">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem">
+                    <div>
+                        <h3 style="margin:0;font-size:1rem">{{ e.name }}</h3>
+                        <p class="card-summary" style="margin:.3rem 0 0">{{ vm.U.shortDate(e.event_date) }}</p>
+                    </div>
+                    <span class="tickets-pill">{{ e.registration_count }}</span>
+                </div>
+                <div class="mt-2">
+                    <a class="btn btn-ghost btn-xs" ng-href="edit.html?id={{ e.event_id }}">View registrations</a>
+                </div>
+            </article>
+        </div>
+        <div class="empty" ng-if="!vm.events.length" style="padding:2rem">
+            <h3>No events yet</h3>
+            <p>Use the <strong>New event</strong> form to add the first one.</p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Hebei Charity Events &middot; Admin console &middot; Xinliang Wang (24832805)</span>
+            <span>PROG2002 Assessment 3 &middot; admin-side website</span>
+        </div>
+    </div>
+</footer>
+
+<script src="vendor/angular.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

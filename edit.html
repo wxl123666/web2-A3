@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit event | Hebei Charity Events Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ffc94d'/><path d='M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z' fill='%23100b18'/></svg>">
+</head>
+<body data-page="admin-edit">
+<div class="texture"></div>
+
+<!-- ===================== NAVIGATION (on every admin page) ============= -->
+<header class="navbar">
+    <nav class="nav-inner" aria-label="Admin navigation">
+        <a class="brand" href="index.html">
+            <span class="brand-mark" style="background:linear-gradient(135deg,#ffc94d,#ff4d5e)">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M32 50C32 50 12 38 12 24.5A10.5 10.5 0 0 1 32 19a10.5 10.5 0 0 1 20 5.5C52 38 32 50 32 50z" fill="#100b18"/>
+                </svg>
+            </span>
+            <span class="brand-text">Admin console<small>管理后台 &middot; PROG2002 A3</small></span>
+        </a>
+        <ul class="nav-links">
+            <li><span class="nav-pill"></span></li>
+            <li><a href="index.html">Events</a></li>
+            <li><a href="new.html">New event</a></li>
+            <li><a href="index.html#registrations">Registrations</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a class="btn btn-ghost btn-sm" href="index.html">&#8592; Back to list</a>
+        </div>
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<main class="container" style="padding-top:2.6rem;padding-bottom:4rem" ng-controller="EditCtrl as vm">
+
+    <div class="section-head" style="margin-bottom:1.4rem">
+        <div>
+            <span class="eyebrow">&#9998; 编辑活动 &middot; Update</span>
+            <h1 class="section-title">{{ vm.event ? vm.event.name : 'Edit event' }}</h1>
+            <p class="section-sub" ng-if="vm.event">
+                Event id {{ vm.event.event_id }} &middot; loaded from
+                <code>GET /api/admin/events/{{ vm.eventId }}</code> &middot; saved with
+                <code>PUT /api/events/{{ vm.eventId }}</code>
+            </p>
+        </div>
+    </div>
+
+    <div class="admin-alert error" ng-if="vm.error" role="alert">
+        <span class="ai">&#9888;</span><span>{{ vm.error }}</span>
+    </div>
+
+    <div class="admin-alert" ng-class="vm.feedback.kind" ng-if="vm.feedback.message" role="alert">
+        <span class="ai">
+            <span ng-if="vm.feedback.kind === 'success'">&#10003;</span>
+            <span ng-if="vm.feedback.kind === 'error'">&#9888;</span>
+        </span>
+        <span>{{ vm.feedback.message }}</span>
+    </div>
+
+    <div class="admin-alert error" ng-if="vm.alerts.length" role="alert">
+        <span class="ai">&#9888;</span>
+        <span>
+            Please fix the following before saving:
+            <ul style="margin:.4rem 0 0;padding-left:1.1rem">
+                <li ng-repeat="a in vm.alerts">{{ a }}</li>
+            </ul>
+        </span>
+    </div>
+
+    <div class="panel" ng-if="vm.loading" style="text-align:center;padding:3rem">
+        <div class="skeleton-card" style="height:140px"></div>
+        <p class="text-dim" style="margin-top:1rem">Loading the event&hellip;</p>
+    </div>
+
+    <!-- ===================== UPDATE FORM ============================= -->
+    <form class="admin-form" ng-if="vm.event" ng-submit="vm.save()" novalidate>
+        <section class="panel">
+            <div class="form-section-title">Event details</div>
+            <div class="form-grid">
+                <div class="field span-2">
+                    <label for="e-name">Event name <span class="req">*</span></label>
+                    <input id="e-name" type="text" ng-model="vm.form.event_name">
+                </div>
+                <div class="field span-2">
+                    <label for="e-summary">Short summary <span class="req">*</span></label>
+                    <input id="e-summary" type="text" ng-model="vm.form.summary" maxlength="255">
+                </div>
+                <div class="field span-2">
+                    <label for="e-desc">Full description</label>
+                    <textarea id="e-desc" ng-model="vm.form.full_description"></textarea>
+                </div>
+                <div class="field">
+                    <label for="e-cat">Category <span class="req">*</span></label>
+                    <select id="e-cat" ng-model="vm.form.category_id">
+                        <option ng-repeat="c in vm.categories track by c.category_id"
+                                value="{{ c.category_id }}">{{ c.name }}</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="e-org">Organisation <span class="req">*</span></label>
+                    <select id="e-org" ng-model="vm.form.organisation_id">
+                        <option ng-repeat="o in vm.organisations track by o.organisation_id"
+                                value="{{ o.organisation_id }}">{{ o.name }}</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="e-date">Start <span class="req">*</span></label>
+                    <input id="e-date" type="datetime-local" ng-model="vm.form.event_date">
+                </div>
+                <div class="field">
+                    <label for="e-end">End</label>
+                    <input id="e-end" type="datetime-local" ng-model="vm.form.end_date">
+                </div>
+            </div>
+
+            <div class="form-section-title" style="margin-top:1.4rem">Where</div>
+            <div class="form-grid">
+                <div class="field span-2">
+                    <label for="e-venue">Venue <span class="req">*</span></label>
+                    <input id="e-venue" type="text" ng-model="vm.form.venue">
+                </div>
+                <div class="field span-2">
+                    <label for="e-address">Street address</label>
+                    <input id="e-address" type="text" ng-model="vm.form.address">
+                </div>
+                <div class="field">
+                    <label for="e-suburb">District / suburb <span class="req">*</span></label>
+                    <input id="e-suburb" type="text" ng-model="vm.form.suburb">
+                </div>
+                <div class="field">
+                    <label for="e-city">City <span class="req">*</span></label>
+                    <input id="e-city" type="text" ng-model="vm.form.city">
+                </div>
+            </div>
+
+            <div class="form-section-title" style="margin-top:1.4rem">Tickets, capacity &amp; status</div>
+            <div class="form-grid">
+                <div class="field">
+                    <label for="e-price">Ticket price <span class="req">*</span></label>
+                    <input id="e-price" type="number" min="0" step="1" ng-model="vm.form.ticket_price">
+                </div>
+                <div class="field">
+                    <label for="e-goal">Fundraising goal</label>
+                    <input id="e-goal" type="number" min="0" step="100" ng-model="vm.form.goal_amount">
+                </div>
+                <div class="field">
+                    <label for="e-cap">Capacity <span class="req">*</span></label>
+                    <input id="e-cap" type="number" min="1" step="1" ng-model="vm.form.capacity">
+                </div>
+                <div class="field">
+                    <label for="e-seats">Seats already taken</label>
+                    <input id="e-seats" type="number" min="0" step="1" ng-model="vm.form.seats_taken">
+                </div>
+                <div class="field">
+                    <label for="e-status">Status</label>
+                    <select id="e-status" ng-model="vm.form.status">
+                        <option value="active">Active (visible on the public site)</option>
+                        <option value="suspended">Suspended (hidden from the public site)</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Options</label>
+                    <label class="check" for="e-free">
+                        <input id="e-free" type="checkbox" ng-model="vm.form.is_free"> Free entry
+                    </label>
+                    <label class="check" for="e-featured">
+                        <input id="e-featured" type="checkbox" ng-model="vm.form.featured"> Featured
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary btn-lg" type="submit" ng-disabled="vm.saving">
+                    {{ vm.saving ? 'Saving…' : 'Save changes' }}
+                </button>
+                <a class="btn btn-ghost" href="index.html">Back to list</a>
+            </div>
+        </section>
+
+        <!-- ===================== REGISTRATIONS ======================= -->
+        <aside class="panel">
+            <div class="reg-head">
+                <h2 style="margin:0;font-size:1.05rem">&#127915; Registrations</h2>
+                <span class="reg-count">{{ vm.event.registrations.length }} &middot;
+                    {{ vm.event.tickets_booked }} tickets</span>
+            </div>
+
+            <div class="table-wrap">
+                <table class="reg-table" ng-if="vm.event.registrations.length">
+                    <thead>
+                        <tr><th>When</th><th>Who</th><th>Tickets</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="r in vm.event.registrations track by r.registration_id">
+                            <td>{{ vm.U.dateTime(r.registration_date) }}</td>
+                            <td>
+                                <div class="reg-who">
+                                    <span class="avatar">{{ vm.U.initials(r.full_name) }}</span>
+                                    <span>{{ r.full_name }}
+                                        <small>{{ r.email }}</small>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="tickets-pill">{{ r.tickets }}</span></td>
+                            <td>
+                                <button class="btn btn-danger btn-xs" type="button"
+                                        ng-click="vm.removeRegistration(r)">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty" ng-if="!vm.event.registrations.length" style="padding:1.6rem 1rem">
+                <p style="margin:0">No registrations for this event yet.</p>
+            </div>
+
+            <p class="text-dim" style="font-size:.82rem;margin-top:1rem">
+                &#128274; While an event has registrations it cannot be deleted. Remove them here
+                one by one, then use <strong>Delete</strong> on the list page.
+            </p>
+        </aside>
+    </form>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Hebei Charity Events &middot; Admin console</span>
+            <span>PROG2002 Assessment 3 &middot; update feature</span>
+        </div>
+    </div>
+</footer>
+
+<script src="vendor/angular.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/edit.js"></script>
+</body>
+</html>
